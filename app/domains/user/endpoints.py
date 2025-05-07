@@ -1,18 +1,49 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.user.service import get_users_from_db
+from app.common.response import BaseResponse
+from app.domains.user.schemas import CreateUserDTO, UserDTO
+from app.domains.user.service import *
 from database.session import get_db
 
 user_router = APIRouter()
 
-@user_router.get("/get-users")
-async def get_users(db: AsyncSession = Depends(get_db)):
+@user_router.post("", response_model=BaseResponse[UserDTO])
+async def post_users(
+        create_user_dto: CreateUserDTO,
+        db: AsyncSession = Depends(get_db),
+):
     """
-    모든 사용자 조회
-    """
-    result = await get_users_from_db(db=db)
-    print(result)
+    # 회원 가입
+    ### Request Body
+    - id: str
+    - username: str
+    - email: str
+    - phone: str
+    - password: str
+    - profile_image_url: str
 
-    return result
+    ## Response
+    - 200: BaseResponse
+    - 409: 존재하는 아이디 or 등록된 이메일/전화번호
+    """
+
+    new_user = await create_user(db=db, user_dto=create_user_dto)
+
+    return BaseResponse(message="회원 가입을 성공했습니다.", data=new_user)
+
+@user_router.delete("/{user_id}", response_model=BaseResponse[None])
+async def delete_user(
+        user_id: str,
+        db: AsyncSession = Depends(get_db),
+):
+    """
+    # 회원 탈퇴
+    ### Response
+    - 200: BaseResponse
+    - 401: 권한 없음
+    - 404: 존재하지 않는 아이디
+    """
+    await delete_user_by_user_id(db=db, user_id=user_id)
+
+    return BaseResponse(message="회원 탈퇴를 성공했습니다.", data=None)
 
