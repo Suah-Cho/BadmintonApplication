@@ -37,8 +37,13 @@ class UserRepository:
         await self.db.refresh(user)
         return user
 
+    async def update(self, user: Users):
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
     async def delete(self, user_id: str):
-        user = await self.get_user_by_user_id(user_id)
+        user = await self.get_user(user_id)
         if user:
             await self.db.delete(user)
             await self.db.commit()

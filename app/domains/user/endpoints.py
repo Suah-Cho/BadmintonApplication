@@ -52,7 +52,6 @@ async def delete_user(
 
 @user_router.get("/{user_id}/profile", response_model=BaseResponse[UserDTO])
 async def get_profile(
-        request: Request,
         user_id: str,
         db: AsyncSession = Depends(get_db),
         user: TokenDataDTO = Depends(authorize_user),
@@ -70,4 +69,27 @@ async def get_profile(
     user = await get_user_profile(db=db, user_id=user.sub)
 
     return BaseResponse(message="회원 프로필 조회를 성공했습니다.", data=user)
+
+@user_router.put("/{user_id}/password", response_model=BaseResponse[None])
+async def put_password(
+        user_id: str,
+        password_dto: PasswordDTO,
+        db: AsyncSession = Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 비밀번호 변경
+    ### Response
+    - 200: BaseResponse
+    - 400: 현재 비밀번호 오류
+    - 401: 로그인 필요
+    - 403: 권한 없음
+    - 422: 새로운 비밀번호 불가
+    """
+    if user.sub != user_id:
+        raise NotAuthorization()
+
+    await update_user_password(db=db, user_id=user.sub, password_dto=password_dto)
+
+    return BaseResponse(message="비밀번호 변경을 성공했습니다.", data=None)
 

@@ -3,10 +3,12 @@ from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.common.exception import DBException
+from app.domains.auth.exceptions import PasswordNoMatch
 from app.domains.user.exceptions import *
 from app.domains.user.models import Users
 from app.domains.user.repository import UserRepository
-from app.core.hash import password_hash
+from app.core.hash import password_hash, verify_password
 from app.domains.user.schemas import *
 
 
@@ -59,3 +61,26 @@ async def get_user_profile(
         raise UserNotExists()
 
     return user
+
+async def update_user_password(*, db: AsyncSession, user_id: str, password_dto: PasswordDTO):
+    repo = UserRepository(db=db)
+
+    user = await repo.get_user(user_id=user_id)
+    if not user:
+        raise UserNotExists()
+
+    # 비밀번호 확인
+    if not verify_password(password_dto.password, user.password):
+        raise PasswordNoMatch()
+
+    # 비밀번호 변경 확인
+    hash_password = password_hash(password_dto.new_password)
+    if user.password == hash_password:
+        raise SamePassword()
+
+    user.password = hash_password
+
+    try:
+        return await repo.update(user=user)
+    except Exception as e:
+        raise DBException()
