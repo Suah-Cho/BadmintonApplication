@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: mysql-db
+    container_name: test-db
     build:
       context: .
       dockerfile: Dockerfile
