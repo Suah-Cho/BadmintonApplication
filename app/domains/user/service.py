@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.common.exception import DBException
 from app.domains.auth.exceptions import PasswordNoMatch
 from app.domains.user.exceptions import *
-from app.domains.user.models import Users
+from app.domains.user.models import User
 from app.domains.user.repository import UserRepository
 from app.core.hash import password_hash, verify_password
 from app.domains.user.schemas import *
@@ -28,7 +28,7 @@ async def create_user(
 
     hash_password = password_hash(user_dto.password)
 
-    new_user = Users(
+    new_user = User(
         user_id=str(uuid.uuid4()),
         id=user_dto.id,
         username=user_dto.username,

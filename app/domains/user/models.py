@@ -5,7 +5,7 @@ from sqlalchemy.sql import func
 
 from app.models.base import Base
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
     user_id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))

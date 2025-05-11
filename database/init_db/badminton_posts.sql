@@ -2,7 +2,7 @@
 --
 -- Host: 127.0.0.1    Database: badminton
 -- ------------------------------------------------------
--- Server version	9.0.1
+-- Server version	9.3.0
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ CREATE TABLE `posts` (
   `writer_id` varchar(36) NOT NULL,
   `title` text,
   `content` text,
-  `category` enum('공지사항','코트정보','장비리뷰','기타') DEFAULT NULL,
+  `category` enum('notice','court','equipment','etc') DEFAULT NULL,
   `create_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `delete_ts` timestamp NULL DEFAULT NULL,
@@ -41,6 +41,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+INSERT INTO `posts` VALUES ('eb224f8e-2e33-11f0-b2a1-0242ac120002','07572f68-2e12-11f0-881a-f2dc77be5366','배드민턴 클럽 모임 안내','매주 토요일 요전 10시부터 12시까지 모임이 있습니다.\n많은 참여부탁드립니다!!\n\n궁금하신 점은 아래 연락처로 연락주시면 상세하게 알려드리겠습니다!!?\n(010-0000-0000, test1@gmail.com)','notice','2025-05-11 06:48:17','2025-05-11 06:48:17',NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-11 11:52:06
+-- Dump completed on 2025-05-11 15:51:32
