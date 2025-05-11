@@ -7,6 +7,7 @@ class UserDTO(BaseModel):
     user_id: str
     id: str
     username: str
+    nickname: str
     password: str
     email: Optional[str] = None
     phone: Optional[str] = None
