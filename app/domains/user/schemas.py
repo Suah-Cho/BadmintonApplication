@@ -25,3 +25,7 @@ class CreateUserDTO(BaseModel):
 class PasswordDTO(BaseModel):
     password: str
     new_password: str
+
+class ProfileDTO(BaseModel):
+    profile_image_url: Optional[str] = None
+    nickname: str

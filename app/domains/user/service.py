@@ -84,3 +84,19 @@ async def update_user_password(*, db: AsyncSession, user_id: str, password_dto: 
         return await repo.update(user=user)
     except Exception as e:
         raise DBException()
+
+async def update_profile(*, db: AsyncSession, user_id: str, profile_dto: ProfileDTO):
+    repo = UserRepository(db=db)
+
+    user = await repo.get_user(user_id=user_id)
+
+    if not user:
+        raise UserNotExists()
+
+    user.nickname = profile_dto.nickname
+    user.profile_image_url = profile_dto.profile_image_url
+
+    try:
+        return await repo.update(user=user)
+    except Exception as e:
+        raise DBException()

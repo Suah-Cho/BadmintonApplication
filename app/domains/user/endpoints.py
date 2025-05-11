@@ -93,3 +93,26 @@ async def put_password(
 
     return BaseResponse(message="비밀번호 변경을 성공했습니다.", data=None)
 
+@user_router.put("/{user_id}/profile", response_model=BaseResponse[UserDTO])
+async def put_profile(
+        user_id: str,
+        profile_dto: ProfileDTO,
+        db: AsyncSession = Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 프로필 수정
+    ### Request Body
+    - profile_image_url: str
+    - nickname: str
+    ### Response
+    - 200: BaseResponse
+    - 401: 로그인 필요
+    - 403: 권한 없음
+    """
+    if user.sub != user_id:
+        raise NotAuthorization()
+
+    result = await update_profile(db=db, user_id=user.sub, profile_dto=profile_dto)
+
+    return BaseResponse(message="프로필 수정을 성공했습니다.", data=result)
