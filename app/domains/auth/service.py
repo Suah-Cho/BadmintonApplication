@@ -27,14 +27,14 @@ async def authenticate_user(
 
     # 토큰 발급
     token_data = TokenDataDTO(
-        user_id=user.user_id,
+        sub=user.user_id,
         id=user.id,
         username=user.username,
         nickname=user.nickname,
     )
     access_token = create_jwt_token(token_data, expires_delta=timedelta(minutes=30 * 24 * 30))
 
-    return TokenDTO(access_token=access_token, user_id=user.user_id, id=user.id)
+    return TokenDTO(access_token=access_token, sub=user.user_id, id=user.id)
 
 
 def create_jwt_token(
