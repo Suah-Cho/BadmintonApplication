@@ -8,7 +8,6 @@ class UserDTO(BaseModel):
     id: str
     username: str
     nickname: str
-    password: str
     email: Optional[str] = None
     phone: Optional[str] = None
     profile_image_url: Optional[str] = None
@@ -22,3 +21,11 @@ class CreateUserDTO(BaseModel):
     phone: Optional[str] = None
     password: str
     profile_image_url: Optional[str] = None
+
+class PasswordDTO(BaseModel):
+    password: str
+    new_password: str
+
+class ProfileDTO(BaseModel):
+    profile_image_url: Optional[str] = None
+    nickname: str

@@ -9,3 +9,7 @@ class PasswordNoMatch(CustomException):
 class TokenNotFound(CustomException):
     status_code: int = status.HTTP_401_UNAUTHORIZED
     message: str = "토큰이 유효하지 않습니다. 로그인을 진행해주세요."
+
+class NotAuthorization(CustomException):
+    status_code: int = status.HTTP_403_FORBIDDEN
+    message: str = "권한이 없습니다."
