@@ -26,10 +26,8 @@ class PhotoRepository:
         return photos
 
     async def delete(self, target_id: str):
-        result = await self.db.execute(
-            select(Photo).where(Photo.target_id == target_id)
-        )
-        photos = result.scalars().all()
+        photos = await self.get_all(target_id=target_id)
         for photo in photos:
             await self.db.delete(photo)
+        await self.db.commit()
         return photos

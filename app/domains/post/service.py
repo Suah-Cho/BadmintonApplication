@@ -14,7 +14,7 @@ from app.domains.post.exceptions import PostNotFound
 from app.domains.post.models import Post
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO, CreatePostDTO
-from app.domains.photo.service import save_photo_list, change_photo_list, get_photo_list
+from app.domains.photo.service import save_photo_list, change_photo_list, get_photo_list, delete_photo_lists
 
 
 async def get_post_list(*, db: AsyncSession) -> list[PostDTO]:
@@ -80,9 +80,9 @@ async def update_post(*, db: AsyncSession, post_id: str, put_post: CreatePostDTO
 
 async def check_post_authorization(*, db: AsyncSession, post_id: str, user: TokenDataDTO) -> None:
     post_repo = PostRepository(db=db)
-
-    post = await post_repo.get(post_id=post_id)
-    if not post:
+    try:
+        post, writer, writer_nickname = await post_repo.get(post_id=post_id)
+    except Exception:
         raise PostNotFound()
 
     if post.writer_id != user.sub:
@@ -93,6 +93,7 @@ async def delete_post(*, db: AsyncSession, post_id: str) -> None:
 
     try:
         await post_repo.delete(post_id=post_id)
+        await delete_photo_lists(db=db, target_id=post_id)
     except Exception as e:
         logging.error(e)
         raise DBException()
