@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domains.user.exceptions import IDAlreadyExists, EmailAlreadyExists, PhoneAlreadyExists, UserNotExists
+from app.domains.user.exceptions import *
 from app.domains.user.models import Users
 from app.domains.user.repository import UserRepository
 from app.core.hash import password_hash
@@ -23,10 +23,6 @@ async def create_user(
     existing_email = await repo.get_user_by_email(user_dto.email)
     if existing_email:
         raise EmailAlreadyExists()
-    # 전화번호 중복 체크
-    existing_phone = await repo.get_user_by_phone(user_dto.phone)
-    if existing_phone:
-        raise PhoneAlreadyExists()
 
     hash_password = password_hash(user_dto.password)
 
@@ -34,14 +30,17 @@ async def create_user(
         user_id=str(uuid.uuid4()),
         id=user_dto.id,
         username=user_dto.username,
+        nickname=user_dto.nickname,
         password=hash_password,
         email=user_dto.email,
         phone=user_dto.phone,
         profile_image_url=user_dto.profile_image_url,
         create_ts=datetime.now(),
     )
-
-    return await repo.create(new_user)
+    try:
+        return await repo.create(new_user)
+    except Exception as e:
+        raise NicknameAlreadyExists()
 
 async def delete_user_by_user_id(
         *, db: AsyncSession, user_id: str
