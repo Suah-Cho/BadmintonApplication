@@ -4,6 +4,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.domains.comment.schemas import CommentDTO
+
+
 class PostCategoryEnum(enum.Enum):
     notice = "notice"
     court = "court"
@@ -32,3 +35,16 @@ class CreatePostDTO(BaseModel):
 
 class DefaultPost(BaseModel):
     post_id: str
+
+class PostDetailDTO(BaseModel):
+    post_id: str
+    writer_id: str
+    writer: str
+    writer_nickname: str
+    title: str
+    content: str
+    category: PostCategoryEnum
+    image_urls: Optional[list[str]] = None
+    comments: Optional[list[CommentDTO]] = None
+    create_ts: datetime
+    update_ts: Optional[datetime] = None

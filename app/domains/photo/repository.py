@@ -14,6 +14,12 @@ class PhotoRepository:
         )
         return result.scalars().all()
 
+    async def get_all_urls(self, target_id: str):
+        result = await self.db.execute(
+            select(Photo.url).where(Photo.target_id == target_id)
+        )
+        return result.scalars().all()
+
     async def create(self, photos: list[Photo]):
         for photo in photos:
             self.db.add(photo)

@@ -7,6 +7,12 @@ from app.common.exception import DBException
 from app.domains.photo.models import Photo
 from app.domains.photo.repository import PhotoRepository
 
+async def get_photo_list(*, db: AsyncSession, target_id: str) -> list[str]:
+    photo_repo = PhotoRepository(db=db)
+
+    urls = await photo_repo.get_all_urls(target_id=target_id)
+
+    return urls
 
 async def save_photo_list(*, db: AsyncSession, urls: list[str], target_id: str, type: str):
 

@@ -1,17 +1,20 @@
 import logging
 import uuid
 from datetime import datetime
+from typing import Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
 from app.domains.auth.exceptions import NotAuthorization
 from app.domains.auth.schemas import TokenDataDTO
+from app.domains.comment.schemas import CommentDTO
+from app.domains.comment.service import get_comments
 from app.domains.post.exceptions import PostNotFound
 from app.domains.post.models import Post
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO, CreatePostDTO
-from app.domains.photo.service import save_photo_list, change_photo_list
+from app.domains.photo.service import save_photo_list, change_photo_list, get_photo_list
 
 
 async def get_post_list(*, db: AsyncSession) -> list[PostDTO]:
@@ -93,3 +96,28 @@ async def delete_post(*, db: AsyncSession, post_id: str) -> None:
     except Exception as e:
         logging.error(e)
         raise DBException()
+
+async def get_post_by_post_id(*, db: AsyncSession, post_id: str)-> Tuple[PostDTO, list[CommentDTO], list[str]]:
+    post_repo = PostRepository(db=db)
+
+    post, writer, writer_nickname = await post_repo.get(post_id=post_id)
+
+    if not post:
+        raise PostNotFound()
+
+    post = PostDTO(
+        post_id=post.post_id,
+        title=post.title,
+        content=post.content,
+        category=post.category,
+        writer_id=post.writer_id,
+        writer=writer,
+        writer_nickname=writer_nickname,
+        create_ts=post.create_ts,
+        update_ts=post.update_ts,
+    )
+
+    comments = await get_comments(db=db, post_id=post.post_id)
+    urls = await get_photo_list(db=db, target_id=post.post_id)
+
+    return post, comments, urls

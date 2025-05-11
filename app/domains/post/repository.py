@@ -18,9 +18,11 @@ class PostRepository:
 
     async def get(self, post_id: str):
         result = await self.db.execute(
-            select(Post).where(Post.post_id == post_id)
+            select(Post, User.username.label("writer"), User.nickname.label("writer_nickname"))
+            .join(User, Post.writer_id == User.user_id)
+            .where(Post.post_id == post_id)
         )
-        return result.scalar_one_or_none()
+        return result.fetchone()
 
     async def create(self, post: Post):
         self.db.add(post)

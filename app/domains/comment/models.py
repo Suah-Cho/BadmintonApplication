@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from app.domains.post.schemas import PostCategoryEnum
 from app.models.base import Base
 
-class PostComment(Base):
+class Comment(Base):
     __tablename__ = "post_comments"
 
     comment_id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
