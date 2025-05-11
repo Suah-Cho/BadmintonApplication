@@ -27,3 +27,12 @@ async def save_photo_list(*, db: AsyncSession, urls: list[str], target_id: str, 
         await photo_repo.create(photos)
     except Exception as e:
         raise DBException()
+
+async def change_photo_list(*, db: AsyncSession, urls: list[str], target_id: str, type: str):
+    photo_repo = PhotoRepository(db=db)
+
+    try:
+        await photo_repo.delete(target_id=target_id)
+        await save_photo_list(db=db, urls=urls, target_id=target_id, type=type)
+    except Exception as e:
+        raise DBException()

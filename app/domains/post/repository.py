@@ -24,5 +24,12 @@ class PostRepository:
 
     async def create(self, post: Post):
         self.db.add(post)
-
         return post
+
+    async def delete(self, post_id: str):
+        post = await self.get(post_id)
+        if post:
+            await self.db.delete(post)
+            await self.db.commit()
+            return True
+        return False

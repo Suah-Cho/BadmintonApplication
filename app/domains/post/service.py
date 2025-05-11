@@ -1,16 +1,17 @@
 import logging
 import uuid
 from datetime import datetime
-from unicodedata import category
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
-from app.domains.photo.repository import PhotoRepository
+from app.domains.auth.exceptions import NotAuthorization
+from app.domains.auth.schemas import TokenDataDTO
+from app.domains.post.exceptions import PostNotFound
 from app.domains.post.models import Post
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO, CreatePostDTO
-from app.domains.photo.service import save_photo_list
+from app.domains.photo.service import save_photo_list, change_photo_list
 
 
 async def get_post_list(*, db: AsyncSession) -> list[PostDTO]:
@@ -50,6 +51,45 @@ async def create_post(*, db: AsyncSession, post: CreatePostDTO, user_id: str) ->
             await save_photo_list(urls=post.image_url, target_id=new_post.post_id, type="post", db=db)
             await post_repo.create(new_post)
         return new_post.post_id
+    except Exception as e:
+        logging.error(e)
+        raise DBException()
+
+async def update_post(*, db: AsyncSession, post_id: str, put_post: CreatePostDTO) -> str:
+    post_repo = PostRepository(db=db)
+
+    post = await post_repo.get(post_id=post_id)
+    if not post:
+        raise PostNotFound()
+
+    post.title = put_post.title
+    post.content = put_post.content
+    post.category = put_post.category
+    post.update_ts = datetime.now()
+
+    try:
+        await change_photo_list(db=db, urls=put_post.image_url, target_id=post_id, type="post")
+        await db.commit()
+        return post_id
+    except Exception as e:
+        logging.error(e)
+        raise DBException()
+
+async def check_post_authorization(*, db: AsyncSession, post_id: str, user: TokenDataDTO) -> None:
+    post_repo = PostRepository(db=db)
+
+    post = await post_repo.get(post_id=post_id)
+    if not post:
+        raise PostNotFound()
+
+    if post.writer_id != user.sub:
+        raise NotAuthorization()
+
+async def delete_post(*, db: AsyncSession, post_id: str) -> None:
+    post_repo = PostRepository(db=db)
+
+    try:
+        await post_repo.delete(post_id=post_id)
     except Exception as e:
         logging.error(e)
         raise DBException()

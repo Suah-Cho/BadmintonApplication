@@ -29,3 +29,6 @@ class CreatePostDTO(BaseModel):
     content: str
     category: PostCategoryEnum
     image_url: list[str]
+
+class DefaultPost(BaseModel):
+    post_id: str

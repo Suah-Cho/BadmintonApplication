@@ -18,3 +18,12 @@ class PhotoRepository:
         for photo in photos:
             self.db.add(photo)
         return photos
+
+    async def delete(self, target_id: str):
+        result = await self.db.execute(
+            select(Photo).where(Photo.target_id == target_id)
+        )
+        photos = result.scalars().all()
+        for photo in photos:
+            await self.db.delete(photo)
+        return photos
