@@ -20,3 +20,12 @@ class PostDTO(BaseModel):
     category: PostCategoryEnum
     create_ts: datetime
     update_ts: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class CreatePostDTO(BaseModel):
+    title: str
+    content: str
+    category: PostCategoryEnum
+    image_url: list[str]

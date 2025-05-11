@@ -9,15 +9,20 @@ class PostRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_all_posts(self):
+    async def get_all(self):
         result = await self.db.execute(
             select(Post, User.username.label("writer"), User.nickname.label("writer_nickname"))
             .join(User, Post.writer_id == User.user_id)
         )
         return result.all()
 
-    async def get_post(self, post_id: str):
+    async def get(self, post_id: str):
         result = await self.db.execute(
             select(Post).where(Post.post_id == post_id)
         )
         return result.scalar_one_or_none()
+
+    async def create(self, post: Post):
+        self.db.add(post)
+
+        return post

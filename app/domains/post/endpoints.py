@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.response import BaseResponse
-from app.domains.post.schemas import PostDTO
+from app.domains.auth.schemas import TokenDataDTO
+from app.domains.auth.utils import authorize_user
+from app.domains.post.schemas import PostDTO, CreatePostDTO
 from app.domains.post.service import *
 from database.session import get_db
 
@@ -21,3 +23,27 @@ async def get_posts(
     result = await get_post_list(db=db)
 
     return BaseResponse(message="게시판을 조회했습니다.", data=result)
+
+@post_router.post("", response_model=BaseResponse)
+async def post_post(
+        post: CreatePostDTO,
+        db: AsyncSession = Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 게시물 등록
+    ### Request Body
+    - title: str
+    - content: str
+    - category: str
+    - image_url: list[str]
+    ### Response
+    - 201: BaseResponse
+    - 400: 잘못된 요청
+    - 401: 권한 없음
+    """
+    post_id = await create_post(db=db, post=post, user_id=user.sub)
+
+    return BaseResponse(message="게시물을 등록했습니다.", data={
+        "post_id": post_id
+    })
