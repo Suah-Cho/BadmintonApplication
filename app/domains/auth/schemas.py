@@ -8,6 +8,7 @@ class TokenDataDTO(BaseModel):
     id: str
     username: str
     nickname: str
+    exp: Optional[datetime] = None
 
 class TokenDTO(BaseModel):
     access_token: str

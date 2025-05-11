@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.response import BaseResponse
-from app.domains.auth.schemas import TokenDTO
+from app.domains.auth.schemas import TokenDTO, TokenDataDTO
 from app.domains.auth.service import authenticate_user
 from app.domains.auth.utils import authorize_user
 from database.session import get_db
@@ -36,7 +36,7 @@ async def login(
 
 @auth_router.get("/logout", response_model=BaseResponse)
 async def logout(
-        user_id: str = Depends(authorize_user)
+        user: TokenDataDTO = Depends(authorize_user)
 ):
     """
     # 로그아웃
