@@ -7,7 +7,7 @@ from app.domains.user.exceptions import *
 from app.domains.user.models import Users
 from app.domains.user.repository import UserRepository
 from app.core.hash import password_hash
-from app.domains.user.schemas import CreateUserDTO
+from app.domains.user.schemas import *
 
 
 async def create_user(
@@ -42,9 +42,20 @@ async def create_user(
     except Exception as e:
         raise NicknameAlreadyExists()
 
-async def delete_user_by_user_id(
+async def delete_user(
         *, db: AsyncSession, user_id: str
 ):
     repo = UserRepository(db=db)
     if not await repo.delete(user_id):
         raise UserNotExists()
+
+async def get_user_profile(
+        *, db: AsyncSession, user_id: str
+) -> UserDTO:
+    repo = UserRepository(db=db)
+
+    user = await repo.get_user(user_id=user_id)
+    if not user:
+        raise UserNotExists()
+
+    return user

@@ -13,7 +13,7 @@ class UserRepository:
         )
         return result.scalars().all()
 
-    async def get_user_by_user_id(self, user_id: str):
+    async def get_user(self, user_id: str):
         result = await self.db.execute(
             select(Users).where(Users.user_id == user_id)
         )

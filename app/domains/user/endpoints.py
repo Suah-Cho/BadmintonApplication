@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.common.response import BaseResponse
+from app.domains.auth.exceptions import TokenNotFound
 from app.domains.user.schemas import CreateUserDTO, UserDTO
 from app.domains.user.service import *
 from database.session import get_db
@@ -43,7 +44,28 @@ async def delete_user(
     - 401: 권한 없음
     - 404: 존재하지 않는 아이디
     """
-    await delete_user_by_user_id(db=db, user_id=user_id)
+    await delete_user(db=db, user_id=user_id)
 
     return BaseResponse(message="회원 탈퇴를 성공했습니다.", data=None)
+
+@user_router.get("/{user_id}/profile", response_model=BaseResponse[UserDTO])
+async def get_profile(
+        request: Request,
+        user_id: str,
+        db: AsyncSession = Depends(get_db),
+):
+    """
+    # 회원 프로필 조회
+    ### Response
+    - 200: BaseResponse
+    - 401: 권한 없음
+    - 404: 존재하지 않는 아이디
+    """
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise TokenNotFound()
+
+    user = await get_user_profile(db=db, user_id=user_id)
+
+    return BaseResponse(message="회원 프로필 조회를 성공했습니다.", data=user)
 
