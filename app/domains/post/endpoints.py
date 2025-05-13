@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends
 from psycopg.errors import CrashShutdown
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Union, Literal
 
 from app.common.response import BaseResponse
 from app.domains.auth.schemas import TokenDataDTO
 from app.domains.auth.utils import authorize_user
-from app.domains.post.schemas import PostDTO, CreatePostDTO, DefaultPost, PostDetailDTO
+from app.domains.post.schemas import *
 from app.domains.post.service import *
 from database.session import get_db
 
@@ -13,6 +14,7 @@ post_router = APIRouter()
 
 @post_router.get("", response_model=BaseResponse[list[PostDTO]])
 async def get_posts(
+        category: Union[PostCategoryEnum, Literal["all"]],
         db: AsyncSession = Depends(get_db),
 ):
     """
@@ -21,7 +23,7 @@ async def get_posts(
     - 200: BaseResponse
     """
 
-    result = await get_post_list(db=db)
+    result = await get_post_list(db=db, category=category)
 
     return BaseResponse(message="게시판을 조회했습니다.", data=result)
 
