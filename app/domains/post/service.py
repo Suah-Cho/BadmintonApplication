@@ -1,7 +1,7 @@
 import logging
 import uuid
 from datetime import datetime
-from typing import Tuple
+from typing import Tuple, Union, Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,14 +13,17 @@ from app.domains.comment.service import get_comments
 from app.domains.post.exceptions import PostNotFound
 from app.domains.post.models import Post
 from app.domains.post.repository import PostRepository
-from app.domains.post.schemas import PostDTO, CreatePostDTO
+from app.domains.post.schemas import PostDTO, CreatePostDTO, PostCategoryEnum
 from app.domains.photo.service import save_photo_list, change_photo_list, get_photo_list, delete_photo_lists
 
 
-async def get_post_list(*, db: AsyncSession) -> list[PostDTO]:
+async def get_post_list(*, db: AsyncSession, category: Union[PostCategoryEnum, Literal["all"]]) -> list[PostDTO]:
 
     post_repo = PostRepository(db=db)
-    rows = await post_repo.get_all()
+    if category is 'all':
+        rows = await post_repo.get_all()
+    else:
+        rows = await post_repo.get_all_for_category(category=category)
 
     posts = [PostDTO(
                 post_id=post.post_id,
