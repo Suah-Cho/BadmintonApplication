@@ -4,10 +4,22 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
+from app.domains.auth.exceptions import NotAuthorization
+from app.domains.comment.exceptions import CommentNotFound
 from app.domains.comment.models import Comment
 from app.domains.comment.repository import CommentRepository
 from app.domains.comment.schemas import CommentDTO, CreateCommentDTO
 
+
+async def check_comment_authorization(*, db: AsyncSession, user_id: str, comment_id: str) -> None:
+    comment_repo = CommentRepository(db=db)
+
+    comment = await comment_repo.get_comment(comment_id=comment_id)
+    if not comment:
+        raise CommentNotFound()
+
+    if comment.commenter_id != user_id:
+        raise NotAuthorization()
 
 async def get_comments(*, db: AsyncSession, post_id: str) -> list[CommentDTO]:
     comment_repo = CommentRepository(db=db)
@@ -42,6 +54,16 @@ async def create_comment(*, db: AsyncSession, post_id: str, comment: CreateComme
             await comment_repo.create(new_comment)
         await db.commit()
         return new_comment.comment_id
+    except Exception as e:
+        logging.error(e)
+        raise DBException()
+
+async def update_comment(*, db: AsyncSession, comment_id: str, comment: CreateCommentDTO) -> str:
+    comment_repo = CommentRepository(db=db)
+
+    try:
+        await comment_repo.update(comment_id=comment_id, comment=comment.comment)
+        return comment_id
     except Exception as e:
         logging.error(e)
         raise DBException()
