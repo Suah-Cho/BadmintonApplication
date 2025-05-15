@@ -11,3 +11,11 @@ class CommentDTO(BaseModel):
     comment: str
     create_ts: datetime
 
+
+class CreateCommentDTO(BaseModel):
+    comment: str
+    
+    
+class DefaultComment(BaseModel):
+    comment_id: str
+
