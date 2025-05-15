@@ -28,7 +28,7 @@ CREATE TABLE `workouts` (
   `workout_date` date DEFAULT NULL,
   `start` time DEFAULT NULL,
   `end` time DEFAULT NULL,
-  `workout_content` text,
+  `content` text,
   `create_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `delete_ts` timestamp NULL DEFAULT NULL,
@@ -57,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-15 10:44:26
+-- Dump completed on 2025-05-15 10:47:02
