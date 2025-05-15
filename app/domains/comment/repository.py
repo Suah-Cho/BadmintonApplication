@@ -14,3 +14,7 @@ class CommentRepository:
             select(Comment, User.username.label("commenter_name"), User.nickname.label("commenter_nickname")).join(User, Comment.commenter_id == User.user_id).where(Comment.post_id == post_id)
         )
         return result.all()
+        
+    async def create(self, comment: Comment):
+        self.db.add(comment)
+        return comment
