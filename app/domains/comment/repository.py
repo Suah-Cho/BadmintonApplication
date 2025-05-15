@@ -35,3 +35,12 @@ class CommentRepository:
 
         await self.db.commit()
         return comment
+
+    async def delete(self, comment_id: str):
+        existing_comment = await self.get_comment(comment_id=comment_id)
+        if not existing_comment:
+            raise CommentNotFound()
+
+        await self.db.delete(existing_comment)
+        await self.db.commit()
+        return True
