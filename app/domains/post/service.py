@@ -64,9 +64,11 @@ async def create_post(*, db: AsyncSession, post: CreatePostDTO, user_id: str) ->
 async def update_post(*, db: AsyncSession, post_id: str, put_post: CreatePostDTO) -> str:
     post_repo = PostRepository(db=db)
 
-    post = await post_repo.get(post_id=post_id)
-    if not post:
+    rows= await post_repo.get(post_id=post_id)
+    if not rows:
         raise PostNotFound()
+    
+    post, _, _ = rows
 
     post.title = put_post.title
     post.content = put_post.content
