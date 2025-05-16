@@ -4,6 +4,7 @@ from app.common.response import BaseResponse
 from app.domains.auth.exceptions import TokenNotFound, NotAuthorization
 from app.domains.auth.schemas import TokenDataDTO
 from app.domains.auth.utils import authorize_user
+from app.domains.post.schemas import PostDTO
 from app.domains.user.schemas import CreateUserDTO, UserDTO
 from app.domains.user.service import *
 from database.session import get_db
@@ -116,3 +117,23 @@ async def put_profile(
     result = await update_profile(db=db, user_id=user.sub, profile_dto=profile_dto)
 
     return BaseResponse(message="프로필 수정을 성공했습니다.", data=result)
+
+@user_router.get("/{user_id}/posts", response_model=BaseResponse[list[PostDTO]])
+async def get_posts_mypage(
+        user_id: str,
+        db: AsyncSession = Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 내 게시물 조회
+    ### Response
+    - 200: BaseResponse
+    - 401: 로그인 필요
+    - 403: 권한 없음
+    """
+    if user.sub != user_id:
+        raise NotAuthorization()
+
+    posts = await get_posts_for_user(db=db, user_id=user.sub)
+
+    return BaseResponse(message="내 게시물 조회를 성공했습니다.", data=posts)
