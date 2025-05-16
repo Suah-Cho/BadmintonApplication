@@ -33,6 +33,14 @@ class PostRepository:
         )
         return result.fetchone()
 
+    async def get_by_writer_id(self, writer_id: str):
+        result = await self.db.execute(
+            select(Post, User.username.label("writer"), User.nickname.label("writer_nickname"))
+            .join(User, Post.writer_id == User.user_id)
+            .where(Post.writer_id == writer_id)
+        )
+        return result.all()
+
     async def create(self, post: Post):
         self.db.add(post)
         return post
