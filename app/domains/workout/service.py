@@ -6,11 +6,24 @@ from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
-from app.domains.photo.service import save_photo_list
+from app.domains.auth.exceptions import NotAuthorization
+from app.domains.photo.service import save_photo_list, delete_photo_lists
+from app.domains.workout.exceptions import WorkoutNotFound
 from app.domains.workout.models import Workout
 from app.domains.workout.repository import WorkoutRepository
 from app.domains.workout.schemas import CreateWorkoutDTO
 
+
+async def check_workout_authorization(
+        *, db: AsyncSession, workout_id: str, user_id: str
+):
+    workout_repo = WorkoutRepository(db=db)
+
+    workout = await workout_repo.get(workout_id=workout_id)
+    if not workout:
+        raise WorkoutNotFound()
+    if workout.user_id != user_id:
+        raise NotAuthorization()
 
 async def create_workout(
         *, db: AsyncSession, workout: CreateWorkoutDTO, user_id: str
@@ -50,6 +63,7 @@ async def get_workout_list(
     for workout in rows:
         date = str(workout.workout_date)
         response[date].append({
+            "workout_id": workout.workout_id,
             "time": f"{workout.start.strftime('%H:%M')}–{workout.end.strftime('%H:%M')}",
             "title": workout.title,
             "content": workout.content,
@@ -58,3 +72,17 @@ async def get_workout_list(
         })
 
     return response
+
+async def delete_workout(*, db: AsyncSession, workout_id: str):
+    workout_repo = WorkoutRepository(db=db)
+
+    workout = await workout_repo.get(workout_id=workout_id)
+    if not workout:
+        raise WorkoutNotFound()
+
+    try:
+        await workout_repo.delete(workout_id=workout_id)
+        await delete_photo_lists(db=db, target_id=workout_id)
+    except Exception as e:
+        logging.error(e)
+        raise DBException()

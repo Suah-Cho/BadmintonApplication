@@ -20,6 +20,22 @@ class WorkoutRepository:
         )
         return result.scalars().all()
 
+    async def get(self, workout_id: str):
+        result = await self.db.execute(
+            select(Workout)
+            .options(selectinload(Workout.photos))
+            .where(Workout.workout_id == workout_id)
+        )
+        return result.scalar_one_or_none()
+
     async def create(self, workout: Workout):
         self.db.add(workout)
         return workout
+
+    async def delete(self, workout_id: str):
+        workout = await self.get(workout_id=workout_id)
+        if workout:
+            await self.db.delete(workout)
+            await self.db.commit()
+            return True
+        return False

@@ -28,6 +28,7 @@ class CreateWorkoutDTO(BaseModel):
     image_url: Optional[list[str]] = None
 
 class WorkoutSummaryDTO(BaseModel):
+    workout_id: str
     time: str
     title: str
     content: str

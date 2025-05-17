@@ -65,3 +65,20 @@ async def post_workout(
     return BaseResponse(message="운동을 등록했습니다.", data={
         "workout_id": workout_id
     })
+
+@workout_router.delete("/{workout_id}", response_model=BaseResponse[BaseWorkoutDTO])
+async def delete_workout_id(
+        workout_id: str,
+        db: AsyncSession = Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 운동 일지 삭제
+    ### Response
+    - 204: BaseResponse
+    - 401: 인증 실패
+    """
+    await check_workout_authorization(db=db, workout_id=workout_id, user_id=user.sub)
+    await delete_workout(db=db, workout_id=workout_id)
+
+    return BaseResponse(message="운동을 삭제했습니다.")
