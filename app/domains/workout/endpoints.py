@@ -11,6 +11,30 @@ from database.session import get_db
 
 workout_router = APIRouter()
 
+
+@workout_router.get("", response_model=BaseResponse[GroupedWorkoutDTO])
+async def get_workouts(
+        month: str,
+        db=Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 운동 목록 조회
+    ### Query Parameters
+    - month: YYYY-MM 형식의 날짜
+    ### Response
+    - 200: BaseResponse
+    - 401: 인증 실패
+    """
+
+    workouts = await get_workout_list(
+        db=db,
+        user_id=user.sub,
+        month=month,
+    )
+
+    return BaseResponse(message="운동 목록을 조회했습니다.", data=workouts)
+
 @workout_router.post("", response_model=BaseResponse[BaseWorkoutDTO])
 async def post_workout(
         workout: CreateWorkoutDTO,

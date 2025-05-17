@@ -1,5 +1,6 @@
 import logging
 import uuid
+from collections import defaultdict
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,3 +38,23 @@ async def create_workout(
         raise DBException()
 
     return new_workout.workout_id
+
+async def get_workout_list(
+        *, db: AsyncSession, user_id: str, month: str
+):
+    workout_repo = WorkoutRepository(db=db)
+
+    rows = await workout_repo.get_all(user_id=user_id, month=month)
+
+    response = defaultdict(list)
+    for workout in rows:
+        date = str(workout.workout_date)
+        response[date].append({
+            "time": f"{workout.start.strftime('%H:%M')}–{workout.end.strftime('%H:%M')}",
+            "title": workout.title,
+            "content": workout.content,
+            "color": workout.color,
+            "image_url": [photo.url for photo in workout.photos],
+        })
+
+    return response

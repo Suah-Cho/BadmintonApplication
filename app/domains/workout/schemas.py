@@ -1,7 +1,7 @@
 from datetime import date, time, datetime
-from typing import Optional
+from typing import Optional, List, Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 class BaseWorkoutDTO(BaseModel):
     workout_id: str
@@ -27,3 +27,12 @@ class CreateWorkoutDTO(BaseModel):
     color: str
     image_url: Optional[list[str]] = None
 
+class WorkoutSummaryDTO(BaseModel):
+    time: str
+    title: str
+    content: str
+    color: str
+    image_url: Optional[list[str]] = None
+
+class GroupedWorkoutDTO(RootModel[Dict[str, List[WorkoutSummaryDTO]]]):
+    pass

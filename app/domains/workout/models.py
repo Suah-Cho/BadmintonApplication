@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, String, Date, Time, Text, TIMESTAMP
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.models.base import Base
@@ -20,3 +21,10 @@ class Workout(Base):
     create_ts = Column(TIMESTAMP, nullable=False, server_default=func.now())
     update_ts = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     delete_ts = Column(TIMESTAMP, nullable=True)
+
+    photos = relationship(
+        "Photo",
+        back_populates="workout",
+        primaryjoin="Workout.workout_id == foreign(Photo.target_id)",
+        cascade="all, delete-orphan"
+    )
