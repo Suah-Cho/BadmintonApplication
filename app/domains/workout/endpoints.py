@@ -66,6 +66,40 @@ async def post_workout(
         "workout_id": workout_id
     })
 
+@workout_router.put("/{workout_id}", response_model=BaseResponse[BaseWorkoutDTO])
+async def put_workout(
+        workout_id: str,
+        workout: CreateWorkoutDTO,
+        db=Depends(get_db),
+        user: TokenDataDTO = Depends(authorize_user),
+):
+    """
+    # 운동 수정
+    ### Request Body
+    - workout_date: date
+    - start: time
+    - end: time
+    - title: str
+    - content: str
+    - color: str
+    ### Response
+    - 200: BaseResponse
+    - 403: 권한 없음
+    """
+
+    await check_workout_authorization(db=db, workout_id=workout_id, user_id=user.sub)
+
+    workout_id = await update_workout(
+        db=db,
+        workout_id=workout_id,
+        updated_workout=workout,
+    )
+
+    return BaseResponse(message="운동을 수정했습니다.", data={
+        "workout_id": workout_id
+        }
+    )
+
 @workout_router.delete("/{workout_id}", status_code=204)
 async def delete_workout_id(
         workout_id: str,

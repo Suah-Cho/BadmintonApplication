@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
 from app.domains.auth.exceptions import NotAuthorization
-from app.domains.photo.service import save_photo_list, delete_photo_lists
+from app.domains.photo.service import save_photo_list, delete_photo_lists, change_photo_list
 from app.domains.workout.exceptions import WorkoutNotFound
 from app.domains.workout.models import Workout
 from app.domains.workout.repository import WorkoutRepository
@@ -72,6 +72,30 @@ async def get_workout_list(
         })
 
     return response
+
+async def update_workout(
+        *, db: AsyncSession, workout_id: str, updated_workout: CreateWorkoutDTO
+):
+    workout_repo = WorkoutRepository(db=db)
+
+    workout = await workout_repo.get(workout_id=workout_id)
+    if not workout:
+        raise WorkoutNotFound()
+
+    workout.workout_date = updated_workout.date
+    workout.start = updated_workout.start
+    workout.end = updated_workout.end
+    workout.title = updated_workout.title
+    workout.content = updated_workout.content
+    workout.color = updated_workout.color
+
+    try:
+        await change_photo_list(db=db, urls=updated_workout.image_url, target_id=workout_id, type="workout")
+        await db.commit()
+        return workout_id
+    except Exception as e:
+        logging.error(e)
+        raise DBException()
 
 async def delete_workout(*, db: AsyncSession, workout_id: str):
     workout_repo = WorkoutRepository(db=db)
