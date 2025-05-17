@@ -2,6 +2,7 @@ import enum
 import uuid
 
 from sqlalchemy import Column, String, Text, TIMESTAMP, Enum
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.domains.photo.schemas import TypeEnum
@@ -17,3 +18,9 @@ class Photo(Base):
     create_ts = Column(TIMESTAMP, nullable=False, server_default=func.now())
     update_ts = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
     delete_ts = Column(TIMESTAMP, nullable=True)
+
+    workout = relationship(
+        "Workout",
+        back_populates="photos",
+        primaryjoin="remote(Workout.workout_id) == foreign(Photo.target_id)"
+    )

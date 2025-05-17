@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.36, for macos14 (arm64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: badminton
+-- Host: localhost    Database: badminton
 -- ------------------------------------------------------
--- Server version	9.0.1
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,10 +28,12 @@ CREATE TABLE `workouts` (
   `workout_date` date DEFAULT NULL,
   `start` time DEFAULT NULL,
   `end` time DEFAULT NULL,
-  `workout_content` text,
+  `content` text,
   `create_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `update_ts` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `delete_ts` timestamp NULL DEFAULT NULL,
+  `color` text,
+  `title` text,
   PRIMARY KEY (`workout_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -42,6 +44,7 @@ CREATE TABLE `workouts` (
 
 LOCK TABLES `workouts` WRITE;
 /*!40000 ALTER TABLE `workouts` DISABLE KEYS */;
+INSERT INTO `workouts` VALUES ('0fc0d339-3120-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','14:00:00','15:00:00','Define the problem or question that...','2025-05-15 00:03:42','2025-05-15 00:03:42',NULL,'#A66DD4','Brainstorm with the team'),('f3b22f2d-311f-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','10:00:00','13:00:00','Start from screen 16','2025-05-15 00:02:55','2025-05-15 00:02:55',NULL,'#3DD598','Design new UX flow for Michael'),('f8a17340-312d-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-02','19:00:00','20:00:00','We will do the legs and back workout','2025-05-15 01:43:16','2025-05-15 01:43:16',NULL,'#5DA3FA','Workout with Ella');
 /*!40000 ALTER TABLE `workouts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-11 11:52:06
+-- Dump completed on 2025-05-15 10:47:02
