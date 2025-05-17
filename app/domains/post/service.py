@@ -42,7 +42,6 @@ async def get_post_list(*, db: AsyncSession, category: Union[PostCategoryEnum, L
 async def create_post(*, db: AsyncSession, post: CreatePostDTO, user_id: str) -> str:
     post_repo = PostRepository(db=db)
 
-    print(post.image_url)
     new_post = Post(
         post_id=str(uuid.uuid4()),
         title=post.title,
