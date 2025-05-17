@@ -66,7 +66,7 @@ async def post_workout(
         "workout_id": workout_id
     })
 
-@workout_router.delete("/{workout_id}", response_model=BaseResponse[BaseWorkoutDTO])
+@workout_router.delete("/{workout_id}", status_code=204)
 async def delete_workout_id(
         workout_id: str,
         db: AsyncSession = Depends(get_db),
@@ -81,4 +81,4 @@ async def delete_workout_id(
     await check_workout_authorization(db=db, workout_id=workout_id, user_id=user.sub)
     await delete_workout(db=db, workout_id=workout_id)
 
-    return BaseResponse(message="운동을 삭제했습니다.")
+    return None
