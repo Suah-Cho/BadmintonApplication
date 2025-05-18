@@ -31,7 +31,7 @@ async def get_comments(*, db: AsyncSession, post_id: str) -> list[CommentDTO]:
 
     comments = [CommentDTO(
         comment_id=comment.comment_id,
-        commenter_user_id=comment.comment_id,
+        commenter_user_id=comment.commenter_id,
         commenter_name=commenter_name,
         commenter_nickname=commenter_nickname,
         comment=comment.comment,
