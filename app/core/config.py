@@ -8,6 +8,10 @@ class Settigns(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     SECRET: str
+    AWS_REGION: str
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    AWS_S3_BUCKET: str
 
     model_config = ConfigDict(env_file=".env")  # type: ignore
 

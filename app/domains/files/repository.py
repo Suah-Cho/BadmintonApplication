@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
-from app.domains.photo.models import Photo
+from app.domains.files.models import Photo
 
 
 class PhotoRepository:

@@ -14,7 +14,7 @@ from app.domains.post.exceptions import PostNotFound
 from app.domains.post.models import Post
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO, CreatePostDTO, PostCategoryEnum
-from app.domains.photo.service import save_photo_list, change_photo_list, get_photo_list, delete_photo_lists
+from app.domains.files.service import save_photo_list, change_photo_list, get_photo_list, delete_photo_lists
 
 
 async def get_post_list(*, db: AsyncSession, category: Union[PostCategoryEnum, Literal["all"]]) -> list[PostDTO]:
@@ -114,7 +114,11 @@ async def delete_post_for_user_id(*, db: AsyncSession, user_id: str) -> None:
 async def get_post_by_post_id(*, db: AsyncSession, post_id: str)-> Tuple[PostDTO, list[CommentDTO], list[str]]:
     post_repo = PostRepository(db=db)
 
-    post, writer, writer_nickname = await post_repo.get(post_id=post_id)
+    result = await post_repo.get(post_id=post_id)
+
+    if result is None:
+        raise PostNotFound()
+    post, writer, writer_nickname = result
 
     if not post:
         raise PostNotFound()

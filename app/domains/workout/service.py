@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
 from app.domains.auth.exceptions import NotAuthorization
-from app.domains.photo.service import save_photo_list, delete_photo_lists, change_photo_list
+from app.domains.files.service import save_photo_list, delete_photo_lists, change_photo_list, get_photo_list
 from app.domains.workout.exceptions import WorkoutNotFound
 from app.domains.workout.models import Workout
 from app.domains.workout.repository import WorkoutRepository
@@ -68,7 +68,7 @@ async def get_workout_list(
             "title": workout.title,
             "content": workout.content,
             "color": workout.color,
-            "image_url": [photo.url for photo in workout.photos],
+            "image_url": await get_photo_list(db=db, target_id=workout.workout_id),
         })
 
     return response
