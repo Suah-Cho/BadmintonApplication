@@ -35,8 +35,8 @@ async def post_users(
 
     return BaseResponse(message="회원 가입을 성공했습니다.", data=new_user)
 
-@user_router.delete("/{user_id}", response_model=BaseResponse[None])
-async def delete_user(
+@user_router.delete("/{user_id}", status_code=204)
+async def delete_user_id(
         user_id: str,
         db: AsyncSession = Depends(get_db),
 ):
@@ -49,7 +49,7 @@ async def delete_user(
     """
     await delete_user(db=db, user_id=user_id)
 
-    return BaseResponse(message="회원 탈퇴를 성공했습니다.", data=None)
+    return None
 
 @user_router.get("/{user_id}/profile", response_model=BaseResponse[UserDTO])
 async def get_profile(

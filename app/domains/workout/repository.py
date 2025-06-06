@@ -28,6 +28,14 @@ class WorkoutRepository:
         )
         return result.scalar_one_or_none()
 
+    async def get_by_user_id(self, user_id: str):
+        result = await self.db.execute(
+            select(Workout)
+            .options(selectinload(Workout.photos))
+            .where(Workout.user_id == user_id)
+        )
+        return result.scalars().all()
+
     async def create(self, workout: Workout):
         self.db.add(workout)
         return workout

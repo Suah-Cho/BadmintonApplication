@@ -102,6 +102,15 @@ async def delete_post(*, db: AsyncSession, post_id: str) -> None:
         logging.error(e)
         raise DBException()
 
+async def delete_post_for_user_id(*, db: AsyncSession, user_id: str) -> None:
+    post_repo = PostRepository(db=db)
+
+    posts = await post_repo.get_by_writer_id(writer_id=user_id)
+
+    for post in posts:
+        logging.error(f"======{post}")
+        await delete_post(db=db, post_id=post.post_id)
+
 async def get_post_by_post_id(*, db: AsyncSession, post_id: str)-> Tuple[PostDTO, list[CommentDTO], list[str]]:
     post_repo = PostRepository(db=db)
 

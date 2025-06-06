@@ -7,11 +7,13 @@ from app.common.exception import DBException
 from app.domains.auth.exceptions import PasswordNoMatch
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO
+from app.domains.post.service import delete_post_for_user_id
 from app.domains.user.exceptions import *
 from app.domains.user.models import User
 from app.domains.user.repository import UserRepository
 from app.core.hash import password_hash, verify_password
 from app.domains.user.schemas import *
+from app.domains.workout.service import delete_workout_for_user_id
 
 
 async def create_user(
@@ -49,9 +51,16 @@ async def create_user(
 async def delete_user(
         *, db: AsyncSession, user_id: str
 ):
+    #     게시물 삭제
+    await delete_post_for_user_id(db=db, user_id=user_id)
+    #     운동일지 삭제
+    await delete_workout_for_user_id(db=db, user_id=user_id)
+
     repo = UserRepository(db=db)
     if not await repo.delete(user_id):
         raise UserNotExists()
+
+
 
 async def get_user_profile(
         *, db: AsyncSession, user_id: str
