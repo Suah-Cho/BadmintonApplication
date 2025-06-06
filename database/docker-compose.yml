@@ -1,6 +1,6 @@
 services:
-  database:
-    container_name: test-db
+  badminton-database:
+    container_name: badminton-db
     build:
       context: .
       dockerfile: Dockerfile

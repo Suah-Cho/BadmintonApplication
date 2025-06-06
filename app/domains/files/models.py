@@ -5,7 +5,7 @@ from sqlalchemy import Column, String, Text, TIMESTAMP, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.domains.photo.schemas import TypeEnum
+from app.domains.files.schemas import TypeEnum
 from app.models.base import Base
 
 class Photo(Base):
