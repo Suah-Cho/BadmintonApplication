@@ -12,6 +12,29 @@ from app.domains.files.models import Photo
 from app.domains.files.repository import PhotoRepository
 from app.domains.files.schemas import PresignedURLDTO, S3FileDTO
 
+def get_url(*, target_key: str) -> str:
+    s3_client = boto3.client(
+        "s3",
+        region_name="ap-northeast-2",
+        aws_access_key_id=config.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY,
+        endpoint_url="https://s3.ap-northeast-2.amazonaws.com"
+    )
+
+    try:
+        presigned_url = s3_client.generate_presigned_url(
+            'get_object',
+            Params={
+                'Bucket': config.AWS_S3_BUCKET,
+                'Key': target_key
+            },
+            ExpiresIn=3600  # URL 유효 기간 (초 단위)
+        )
+    except Exception as e:
+        logging.error(e)
+        raise PresignedURLException()
+
+    return presigned_url
 
 async def get_photo_list(*, db: AsyncSession, target_id: str) -> list[str]:
     photo_repo = PhotoRepository(db=db)
@@ -24,7 +47,7 @@ async def get_photo_list(*, db: AsyncSession, target_id: str) -> list[str]:
         region_name="ap-northeast-2",
         aws_access_key_id=config.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY,
-        endpoint_url="https://s3.ap-northeast-2.amazonaws.com"  # 🔥 추가!
+        endpoint_url="https://s3.ap-northeast-2.amazonaws.com"
     )
     try:
         for file in files:

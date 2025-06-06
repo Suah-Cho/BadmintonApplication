@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import datetime
 
@@ -5,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.common.exception import DBException
 from app.domains.auth.exceptions import PasswordNoMatch
+from app.domains.files.service import get_url
 from app.domains.post.repository import PostRepository
 from app.domains.post.schemas import PostDTO
 from app.domains.post.service import delete_post_for_user_id
@@ -71,7 +73,18 @@ async def get_user_profile(
     if not user:
         raise UserNotExists()
 
-    return user
+    user_dto = UserDTO(
+        user_id=user.user_id,
+        id=user.id,
+        username=user.username,
+        nickname=user.nickname,
+        email=user.email,
+        phone=user.phone,
+        profile_image_url=get_url(target_key=user.profile_image_url) if user.profile_image_url else None,
+        create_ts=user.create_ts,
+    )
+
+    return user_dto
 
 async def update_user_password(*, db: AsyncSession, user_id: str, password_dto: PasswordDTO):
     repo = UserRepository(db=db)
