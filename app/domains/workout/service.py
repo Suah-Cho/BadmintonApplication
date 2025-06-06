@@ -110,3 +110,15 @@ async def delete_workout(*, db: AsyncSession, workout_id: str):
     except Exception as e:
         logging.error(e)
         raise DBException()
+
+async def delete_workout_for_user_id(*, db: AsyncSession, user_id: str):
+    workout_repo = WorkoutRepository(db=db)
+
+    try:
+        workouts = await workout_repo.get_by_user_id(user_id=user_id)
+        for workout in workouts:
+            await workout_repo.delete(workout_id=workout.workout_id)
+            await delete_photo_lists(db=db, target_id=workout.workout_id)
+    except Exception as e:
+        logging.error(e)
+        raise DBException()
