@@ -20,7 +20,7 @@ from app.domains.files.service import save_photo_list, change_photo_list, get_ph
 async def get_post_list(*, db: AsyncSession, category: Union[PostCategoryEnum, Literal["all"]]) -> list[PostDTO]:
 
     post_repo = PostRepository(db=db)
-    if category is 'all':
+    if category == 'all':
         rows = await post_repo.get_all()
     else:
         rows = await post_repo.get_all_for_category(category=category)
