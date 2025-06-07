@@ -40,7 +40,7 @@ CREATE TABLE `post_comments` (
 
 LOCK TABLES `post_comments` WRITE;
 /*!40000 ALTER TABLE `post_comments` DISABLE KEYS */;
-INSERT INTO `post_comments` VALUES ('58bb900a-2e47-11f0-b2a1-0242ac120002','eb224f8e-2e33-11f0-b2a1-0242ac120002','cc63fd68-2e12-11f0-881a-f2dc77be5366','열심히 참여하겠습니다!!','2025-05-11 09:07:21','2025-05-11 09:07:21',NULL);
+-- INSERT INTO `post_comments` VALUES ('58bb900a-2e47-11f0-b2a1-0242ac120002','eb224f8e-2e33-11f0-b2a1-0242ac120002','cc63fd68-2e12-11f0-881a-f2dc77be5366','열심히 참여하겠습니다!!','2025-05-11 09:07:21','2025-05-11 09:07:21',NULL);
 /*!40000 ALTER TABLE `post_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

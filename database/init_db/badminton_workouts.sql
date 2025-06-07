@@ -44,7 +44,7 @@ CREATE TABLE `workouts` (
 
 LOCK TABLES `workouts` WRITE;
 /*!40000 ALTER TABLE `workouts` DISABLE KEYS */;
-INSERT INTO `workouts` VALUES ('0fc0d339-3120-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','14:00:00','15:00:00','Define the problem or question that...','2025-05-15 00:03:42','2025-05-15 00:03:42',NULL,'#A66DD4','Brainstorm with the team'),('f3b22f2d-311f-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','10:00:00','13:00:00','Start from screen 16','2025-05-15 00:02:55','2025-05-15 00:02:55',NULL,'#3DD598','Design new UX flow for Michael'),('f8a17340-312d-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-02','19:00:00','20:00:00','We will do the legs and back workout','2025-05-15 01:43:16','2025-05-15 01:43:16',NULL,'#5DA3FA','Workout with Ella');
+-- INSERT INTO `workouts` VALUES ('0fc0d339-3120-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','14:00:00','15:00:00','Define the problem or question that...','2025-05-15 00:03:42','2025-05-15 00:03:42',NULL,'#A66DD4','Brainstorm with the team'),('f3b22f2d-311f-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-01','10:00:00','13:00:00','Start from screen 16','2025-05-15 00:02:55','2025-05-15 00:02:55',NULL,'#3DD598','Design new UX flow for Michael'),('f8a17340-312d-11f0-a973-0050568bae2f','07572f68-2e12-11f0-881a-f2dc77be5366','2025-05-02','19:00:00','20:00:00','We will do the legs and back workout','2025-05-15 01:43:16','2025-05-15 01:43:16',NULL,'#5DA3FA','Workout with Ella');
 /*!40000 ALTER TABLE `workouts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
