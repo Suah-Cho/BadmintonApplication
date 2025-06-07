@@ -8,7 +8,7 @@ from app.domains.files.service import generate_presigned_urls
 
 file_router = APIRouter()
 
-@file_router.get("", response_model=BaseResponse[list[S3FileDTO]])
+@file_router.post("", response_model=BaseResponse[list[S3FileDTO]])
 async def presigned_url(
         files: list[PresignedURLDTO],
         user: TokenDataDTO = Depends(authorize_user),
